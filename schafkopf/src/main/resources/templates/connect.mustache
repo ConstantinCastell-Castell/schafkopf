@@ -1,0 +1,22 @@
+<div id="connect">
+	<form id="connectForm" action="/connect" method="post"> 
+	    Name: <input type="text" name="name" value="Type your name" /> 
+	    <input type="submit" value="Connect" /> 
+	</form>
+	<script type="text/javascript">
+	// prepare the form when the DOM is ready 
+	$(document).ready(function() { 
+	    // bind form using ajaxForm 
+	    $('#gameArea').ajaxForm({ 
+	        // target identifies the element(s) to update with the server response 
+	        target: '#gameArea', 
+	 
+	        // success identifies the function to invoke when the server response 
+	        // has been received; here we apply a fade-in effect to the new content 
+	        success: function() { 
+	            $('#gameArea').fadeIn('slow'); 
+	        } 
+	    }); 
+	});
+	</script>
+</div>

@@ -1,0 +1,40 @@
+<div id="tables">
+	<p>Hello {{#player}} {{name}} {{/player}}</p>
+	<div id="createTable">
+		<form id="createTableForm" action="/table/add" method="post"> 
+		    Name: <input type="text" name="name" value="Type the table name" /> 
+		    <input type="submit" value="Create" /> 
+		</form>
+		<script type="text/javascript">
+		// prepare the form when the DOM is ready 
+		$(document).ready(function() { 
+		    // bind form using ajaxForm 
+		    $('#gameArea').ajaxForm({ 
+		        // target identifies the element(s) to update with the server response 
+		        target: '#gameArea', 
+		 
+		        // success identifies the function to invoke when the server response 
+		        // has been received; here we apply a fade-in effect to the new content 
+		        success: function() { 
+		            $('#gameArea').fadeIn('slow'); 
+		        } 
+		    }); 
+		});
+		</script>
+	</div>
+	<div id="tableList">
+		<ul>
+		{{#tables}}
+		<li><a href="/table/join/{{id}}">{{name}}</a></li>
+		{{/tables}}
+		</ul>
+	</div>
+	<script type="text/javascript">
+	$('#tableList a').click(function(event) {
+		event.preventDefault();
+		console.log($(this).attr('href'));
+	    $('#gameArea').load($(this).attr('href'));
+	    
+	});
+	</script>
+</div>

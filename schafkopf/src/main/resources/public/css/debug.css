@@ -1,0 +1,18 @@
+ul {
+	background-color: grey;
+}
+
+.ui-state-highlight {
+	padding: 1px;
+	float: left;
+	width: 100px;
+	height: 90px;
+	text-align: center;
+	border: 5px solid #0F0;
+	user-select: none;
+	background-color: red;
+}
+
+.otherPlayerActive {
+	background-color: green;
+}

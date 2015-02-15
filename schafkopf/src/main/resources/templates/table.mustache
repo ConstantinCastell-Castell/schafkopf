@@ -1,0 +1,43 @@
+<div id="table">
+	<div id="status">
+		<p>Hello {{#player}} {{name}} {{/player}}</p>
+		<p>you are at the table {{#table}} {{name}} {{/table}}</p>
+		
+	</div>
+	<div id="gameLog">
+	
+	</div>
+	<div id="activePlayers">
+		<div id="otherPlayers">
+			{{> otherPlayers}}		
+		</div>
+		
+		<div id="centerCards">
+			Place cards here
+			<ul id="centerCardsField" class="cardlist">
+				
+			</ul>
+		</div>
+		{{#player}}
+		<div id="connectedPlayer" class="{{#isActivePlayer}}otherPlayerActive{{/isActivePlayer}}">
+			This is your hand:
+			<ul id="hand" class="cardlist">
+			{{#hand}}
+				<li class="card" data-card-id="{{id}}">
+				<img src="{{icon}}">
+				{{rankName}}
+				</li>
+			{{/hand}}
+			</ul>
+			<script type="text/javascript">
+			initCardList();
+			</script>
+		</div>
+		{{/player}}
+		<div style="clear: both;"></div>
+	
+	</div>
+	<div id="playerActions">
+		{{> playerActions}}
+	</div>
+</div>

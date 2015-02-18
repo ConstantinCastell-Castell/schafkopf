@@ -6,6 +6,7 @@
 	<title>Schafkopf</title>
 	<script src="/js/jquery-2.1.3.min.js"></script> 
     <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
     <script src="/js/schafkopf.js"></script>
     
     <link rel="stylesheet" type="text/css" href="/css/schafkopf.css">
@@ -17,30 +18,6 @@
 	<div id="gameArea">
 	{{> loader}}
 	</div>
-	<script type="text/javascript">
-		var isUpdating = false;
-		function updateOtherPlayers() {
-			if (!isUpdating) {
-				if (!!($('#otherPlayers')[0])) {
-					jQuery.ajax({
-					    url: "/table/otherPlayers",
-					    success: function(html) {
-					    	$('#otherPlayers').html(html);
-					    },
-					    async:true
-					  }).always(function() {
-						  isUpdating = false;
-					  });
-				}
-			}
-			
-		}
-		
-		$(document).ready(function() {
-			nIntervId = setInterval(updateOtherPlayers, 500);
-		});
-		
-		</script>
 </body>
 
 </html>

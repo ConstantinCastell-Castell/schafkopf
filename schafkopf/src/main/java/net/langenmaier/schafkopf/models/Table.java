@@ -15,9 +15,14 @@ public class Table {
 	private Player currentPlayer;
 	private Game game;
 	private int id;
-	Deck deck;
+	private Deck deck;
 	private GamePhase gamePhase = GamePhase.NO_GAME;
+	private List<Card> centerCards = new ArrayList<Card>();
 	
+	public List<Card> getCenterCards() {
+		return centerCards;
+	}
+
 	public Table(String name, Player player) {
 		this.name = name;
 		this.dealer = player;
@@ -133,6 +138,35 @@ public class Table {
 		}
 		
 		return otherPlayers;
+	}
+
+	public boolean isPlayerActive(Player p) {
+		return p == this.currentPlayer;
+	}
+
+	public Boolean playCard(Player player, int cardId) {
+		System.out.println("playing CARD");
+		if (player == currentPlayer) {
+			Card card = null;
+			for(Card c : player.getHand()) {
+				if (c.hashCode() == cardId) {
+					card = c;
+				}
+			}
+			if (card == null) {
+				System.out.println("CARD INVALID");
+				return false;
+			}
+			
+			centerCards.add(card);
+			player.getHand().remove(card);
+			
+			next();
+			
+			return true;
+			
+		}
+		return false;
 	}
 
 

@@ -1,5 +1,7 @@
 package net.langenmaier.schafkopf.models;
 
+import net.langenmaier.schafkopf.Schafkopf;
+
 public class Bot extends Player implements Runnable {
 	private static int botCounter = 0;
 	private int botId;
@@ -35,6 +37,9 @@ public class Bot extends Player implements Runnable {
 				takeCards(getTable().getDeck().deal());
 				getTable().next();
 			}
+		}
+		synchronized (Schafkopf.class) {
+    		Schafkopf.class.notifyAll();;
 		}
 	}
 

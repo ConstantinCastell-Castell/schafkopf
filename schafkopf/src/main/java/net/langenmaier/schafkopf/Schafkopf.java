@@ -7,12 +7,16 @@ import static spark.SparkBase.staticFileLocation;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 import net.langenmaier.schafkopf.models.Bot;
-import net.langenmaier.schafkopf.models.GamePhase;
+import net.langenmaier.schafkopf.models.GameActions;
+import net.langenmaier.schafkopf.models.GameState;
 import net.langenmaier.schafkopf.models.Player;
 import net.langenmaier.schafkopf.models.Table;
 import net.langenmaier.schafkopf.services.ConnectedPlayerService;
 import net.langenmaier.schafkopf.services.TablesService;
+import net.langenmaier.schafkopf.utils.JsonTransformer;
 import net.langenmaier.schafkopf.utils.MustacheTemplateEngine;
 import spark.ModelAndView;
 import spark.Request;
@@ -30,8 +34,10 @@ public class Schafkopf {
         post("/table/add", (request, reponse) -> addTable(request), new MustacheTemplateEngine());
         post("/table/leave", (request, reponse) -> leaveTable(request), new MustacheTemplateEngine());
         post("/table/close", (request, reponse) -> closeTable(request), new MustacheTemplateEngine());
+        get("/table/state", "application/json", (request, reponse) -> tableState(request), new JsonTransformer());
         post("/table/addBot", (request, reponse) -> addBotToTable(request), new MustacheTemplateEngine());
-        get("/table/otherPlayers", (request, reponse) -> updateOtherPlayers(request), new MustacheTemplateEngine());
+        post("/table/shuffeled", "application/json", (request, reponse) -> shuffeledTable(request), new JsonTransformer());
+        post("/table/playCard", "application/json", (request, reponse) -> playCard(request), new JsonTransformer());
         post("/table/startDealing", (request, reponse) -> startDealing(request), new MustacheTemplateEngine());
         post("/table/takeMoreCards", (request, reponse) -> takeMoreCards(request), new MustacheTemplateEngine());
         get("/table/join/:id", (request, reponse) -> joinTable(request), new MustacheTemplateEngine());
@@ -72,6 +78,23 @@ public class Schafkopf {
         return loadCurrentGame(request);
 	}
     
+    private static GameState tableState(Request request) {
+    	Session session = request.session();
+    	synchronized (Schafkopf.class) {
+    		try {
+    			Schafkopf.class.wait(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if (session.attributes().contains("table")) {
+			Table table = session.attribute("table");
+			Player player = session.attribute("player");
+    		return new GameState(table, player);
+    	}
+        return new GameState(null, null);
+	}
+    
     private static ModelAndView addBotToTable(Request request) {
     	Session session = request.session();
 		if (session.attributes().contains("table")) {
@@ -79,30 +102,33 @@ public class Schafkopf {
     		Bot bot = new Bot();
     		table.addPlayer(bot);
     		(new Thread(bot)).start();
-    		System.out.println("BOT ADDED");
     	}
         return loadCurrentGame(request);
 	}
     
-    private static ModelAndView updateOtherPlayers(Request request) {
+    private static Boolean shuffeledTable(Request request) {
     	Session session = request.session();
-    	synchronized (Schafkopf.class) {
-    		try {
-    			Schafkopf.class.wait(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (session.attributes().contains("table")) {
-			Table table = session.attribute("table");
+		if (session.attributes().contains("player")) {
 			Player player = session.attribute("player");
-			HashMap<String, Object> tableModel = new HashMap<>();
-    		tableModel.put("otherPlayers", table.getOtherPlayers(player));
-    		System.out.println(tableModel.size());
-    		return new ModelAndView(tableModel, "otherPlayers.mustache");
+			String jsonHand = request.queryParams("hand");
+			Gson gson = new Gson();
+			int[] cardIds = gson.fromJson(jsonHand, int[].class);
+    		return player.setShuffeledHand(cardIds);
     	}
-        return new ModelAndView(null, "otherPlayers.mustache");
+        return false;
+	}
+    
+    private static Boolean playCard(Request request) {
+    	Session session = request.session();
+    	System.out.println("play card");
+		if (session.attributes().contains("table")) {
+			Player player = session.attribute("player");
+			Table table = session.attribute("table");
+			System.out.println(request.queryParams("cardId"));
+			int cardId = Integer.parseInt(request.queryParams("cardId"));
+			return table.playCard(player, cardId);
+    	}
+        return false;
 	}
 
     private static ModelAndView startDealing(Request request) {
@@ -161,13 +187,8 @@ public class Schafkopf {
 			HashMap<String, Object> tableModel = new HashMap<>();
 			tableModel.put("player", player);
 			tableModel.put("table", table);
-			System.out.println(table.hashCode());
 			tableModel.put("otherPlayers", table.getOtherPlayers(player));
-			tableModel.put("isOwner", player == table.getOwner());
-			tableModel.put("isPlayer", player != table.getOwner());
-			tableModel.put("canAddBot", (player == table.getOwner()) && (table.getPlayers().size()<4));
-			tableModel.put("canDeal", (player == table.getDealer()) && (table.getGamePhase() == GamePhase.NO_GAME));
-			tableModel.put("canTakeMoreCards", (player.isActivePlayer() && (player.getHand().size()<8)));
+			tableModel.put("gameActions", new GameActions(player, table));
 			return new ModelAndView(tableModel, "table.mustache");
 		}
 		

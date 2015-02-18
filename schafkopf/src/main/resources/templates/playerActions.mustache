@@ -1,68 +1,23 @@
-{{#isPlayer}}
+{{#gameActions}}
+
 <form id="leaveTableForm" action="/table/leave" method="post"> 
     <input type="submit" value="Leave table" /> 
 </form>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#leaveTableForm').ajaxForm({
-        target: '#gameArea',
-        success: function() { 
-            $('#gameArea').fadeIn('slow'); 
-        } 
-    }); 
-});
-</script>
-{{/isPlayer}}
-{{#isOwner}}
-<form id="closeTableForm" action="/table/close" method="post"> 
-    <input type="submit" value="Close table" /> 
-</form>
-<script type="text/javascript">
 
-</script>
-{{/isOwner}}
-{{#canAddBot}}
+<form id="closeTableForm" action="/table/close" method="post"> 
+    <input type="submit" value="Close table" {{^isOwner}}disabled="disabled"{{/isOwner}}/> 
+</form>
+
 <form id="addBotForm" action="/table/addBot" method="post"> 
-    <input type="submit" value="Add bot" /> 
+    <input type="submit" value="Add bot" {{^canAddBot}}disabled="disabled"{{/canAddBot}}/> 
 </form>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#addBotForm').ajaxForm({
-        target: '#gameArea',
-        success: function() { 
-            $('#gameArea').fadeIn('slow'); 
-        } 
-    }); 
-});
-</script>
-{{/canAddBot}}
-{{#canDeal}}
+
 <form id="startDealingForm" action="/table/startDealing" method="post"> 
-    <input type="submit" value="Deal" /> 
+    <input type="submit" value="Deal" {{^canDeal}}disabled="disabled"{{/canDeal}}/> 
 </form>
-<script type="text/javascript">
-$(document).ready(function() { 
-    $('#startDealingForm').ajaxForm({ 
-        target: '#gameArea',
-        success: function() { 
-            $('#gameArea').fadeIn('slow'); 
-        } 
-    }); 
-});
-</script>
-{{/canDeal}}
-{{#canTakeMoreCards}}
+
 <form id="takeMoreCardsForm" action="/table/takeMoreCards" method="post"> 
-    <input type="submit" value="Take Cards" /> 
+    <input type="submit" value="Take Cards" {{^canTakeMoreCards}}disabled="disabled"{{/canTakeMoreCards}}/> 
 </form>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#takeMoreCardsForm').ajaxForm({
-        target: '#gameArea',
-        success: function() {
-            $('#gameArea').fadeIn('slow');
-        }
-    });
-});
-</script>
-{{/canTakeMoreCards}}
+
+{{/gameActions}}

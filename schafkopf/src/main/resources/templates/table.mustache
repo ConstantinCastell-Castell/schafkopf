@@ -13,10 +13,17 @@
 		</div>
 		
 		<div id="centerCards">
-			Place cards here
+			Place cards here:
+			{{#table}}
 			<ul id="centerCardsField" class="cardlist">
-				
+				{{#centerCards}}
+				<li class="card playedCard" data-card-id="{{id}}">
+					<img src="{{icon}}">
+					{{rankName}}
+				</li>
+				{{/centerCards}}
 			</ul>
+			{{/table}}
 		</div>
 		{{#player}}
 		<div id="connectedPlayer" class="{{#isActivePlayer}}otherPlayerActive{{/isActivePlayer}}">

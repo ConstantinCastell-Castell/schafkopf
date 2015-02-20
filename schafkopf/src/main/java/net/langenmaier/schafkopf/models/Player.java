@@ -5,7 +5,8 @@ import java.util.List;
 
 public class Player {
 	private String name;
-	private List<Card> hand = new ArrayList<Card>();
+	protected List<Card> hand = new ArrayList<Card>();
+	protected List<List<Card>> tricks = new ArrayList<List<Card>>();
 	private transient Table table;
 	private boolean isActivePlayer = false;
 	
@@ -67,6 +68,10 @@ public class Player {
 		}
 		
 		return false;
+	}
+
+	public void addTrick(List<Card> centerCards) {
+		tricks.add(centerCards);
 	}
 
 }

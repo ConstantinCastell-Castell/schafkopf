@@ -9,8 +9,11 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import net.langenmaier.schafkopf.enums.GameType;
+import net.langenmaier.schafkopf.enums.Suits;
 import net.langenmaier.schafkopf.models.Bot;
 import net.langenmaier.schafkopf.models.GameActions;
+import net.langenmaier.schafkopf.models.GameAnnouncement;
 import net.langenmaier.schafkopf.models.GameState;
 import net.langenmaier.schafkopf.models.Player;
 import net.langenmaier.schafkopf.models.Table;
@@ -38,6 +41,7 @@ public class Schafkopf {
         post("/table/addBot", (request, reponse) -> addBotToTable(request), new MustacheTemplateEngine());
         post("/table/shuffeled", "application/json", (request, reponse) -> shuffeledTable(request), new JsonTransformer());
         post("/table/playCard", "application/json", (request, reponse) -> playCard(request), new JsonTransformer());
+        post("/table/announce", "application/json", (request, reponse) -> announce(request), new JsonTransformer());
         post("/table/startDealing", (request, reponse) -> startDealing(request), new MustacheTemplateEngine());
         post("/table/takeMoreCards", (request, reponse) -> takeMoreCards(request), new MustacheTemplateEngine());
         get("/table/join/:id", (request, reponse) -> joinTable(request), new MustacheTemplateEngine());
@@ -120,13 +124,26 @@ public class Schafkopf {
     
     private static Boolean playCard(Request request) {
     	Session session = request.session();
-    	System.out.println("play card");
 		if (session.attributes().contains("table")) {
 			Player player = session.attribute("player");
 			Table table = session.attribute("table");
 			System.out.println(request.queryParams("cardId"));
 			int cardId = Integer.parseInt(request.queryParams("cardId"));
 			return table.playCard(player, cardId);
+    	}
+        return false;
+	}
+    
+    private static Boolean announce(Request request) {
+    	Session session = request.session();
+    	if (session.attributes().contains("table")) {
+			Player player = session.attribute("player");
+			Table table = session.attribute("table");
+			GameType type = GameType.valueOf(request.queryParams("type"));
+			Suits suit = Suits.valueOf(request.queryParams("suit"));
+			GameAnnouncement announcement = new GameAnnouncement(type, suit);
+			table.announce(player, announcement);
+			return true;
     	}
         return false;
 	}
@@ -146,7 +163,7 @@ public class Schafkopf {
     		Table table = session.attribute("table");
     		Player player = session.attribute("player");
     		if (player.getHand().size()<8) {
-    			player.takeCards(table.getDeck().deal());
+    			player.takeCards(table.deal());
     		}
     	}
         return loadCurrentGame(request);

@@ -1,9 +1,16 @@
 package net.langenmaier.schafkopf.models;
 
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import net.langenmaier.schafkopf.services.ConnectedPlayerService;
+import net.langenmaier.schafkopf.Schafkopf;
+import net.langenmaier.schafkopf.enums.GamePhase;
+import net.langenmaier.schafkopf.enums.GameType;
+import net.langenmaier.schafkopf.enums.Suits;
 
 public class Table {
 	private static int currentId = 0;
@@ -18,9 +25,15 @@ public class Table {
 	private Deck deck;
 	private GamePhase gamePhase = GamePhase.NO_GAME;
 	private List<Card> centerCards = new ArrayList<Card>();
+	private List<Card> lastCenterCards = new ArrayList<Card>();
+	private List<SimpleEntry<Player, GameAnnouncement>> playerAnnouncements = new ArrayList<SimpleEntry<Player, GameAnnouncement>>();
 	
 	public List<Card> getCenterCards() {
 		return centerCards;
+	}
+	
+	public List<Card> getLastCenterCards() {
+		return lastCenterCards;
 	}
 
 	public Table(String name, Player player) {
@@ -120,14 +133,64 @@ public class Table {
 		return deck;
 	}
 
-	public void next() {
-		
-		currentPlayer = getNextPlayer(currentPlayer);
-		System.out.println("CURRENT: " + currentPlayer.getName());
-		//TODO
-		//implement gamephase change
+	private void next() {
+		if (gamePhase == GamePhase.DEALING) {
+			currentPlayer = getNextPlayer(currentPlayer);
+			System.out.println("CURRENT: " + currentPlayer.getName());
+			if (deck.isDealt()) {
+				gamePhase = GamePhase.ANNOUNCEMENT;
+			}
+		} else if ((gamePhase == GamePhase.ANNOUNCEMENT)) {
+			if (announcementWinner(playerAnnouncements) != null) {
+				createGame();
+				gamePhase = GamePhase.PLAYING;
+				currentPlayer = getNextPlayer(dealer);
+			} else {
+				currentPlayer = getNextPlayer(currentPlayer);
+			}
+		} else if ((gamePhase == GamePhase.PLAYING)) {
+			if (centerCards.size() == 4) {
+				Player winner = getTrickWinner();
+				winner.addTrick(centerCards);
+				lastCenterCards = centerCards;
+				centerCards = new ArrayList<Card>();
+				currentPlayer = winner;
+				if (winner.getHand().size() == 0) {
+					gamePhase = GamePhase.PAYING;
+				}
+			} else {
+				currentPlayer = getNextPlayer(currentPlayer);
+			}
+		}
+
+		synchronized (Schafkopf.class) {
+    		Schafkopf.class.notifyAll();
+		}
 	}
 	
+	private Player getTrickWinner() {
+		// TODO implement an analysis in the game class
+		return getNextPlayer(currentPlayer);
+	}
+
+	private void createGame() {
+		System.out.println("CREATING A GAME");
+		
+		SimpleEntry<Player, GameAnnouncement> winningAnnouncement = announcementWinner(playerAnnouncements);
+		game = new NormalGame(winningAnnouncement.getKey(), winningAnnouncement.getValue());
+	}
+
+	private SimpleEntry<Player, GameAnnouncement> announcementWinner(List<SimpleEntry<Player, GameAnnouncement>> playerAnnouncement) {
+		if (playerAnnouncement.size() == 4) {
+			for(SimpleEntry<Player, GameAnnouncement> e : playerAnnouncement) {
+				if (e.getValue().getType() == GameType.NORMAL_GAME) {
+					return e;
+				}
+			}
+		}
+		return null;
+	}
+
 	public List<Player> getOtherPlayers(Player player) {
 		List<Player> otherPlayers = new ArrayList<Player>();
 		
@@ -145,8 +208,7 @@ public class Table {
 	}
 
 	public Boolean playCard(Player player, int cardId) {
-		System.out.println("playing CARD");
-		if (player == currentPlayer) {
+		if (player == currentPlayer && gamePhase==GamePhase.PLAYING) {
 			Card card = null;
 			for(Card c : player.getHand()) {
 				if (c.hashCode() == cardId) {
@@ -158,16 +220,33 @@ public class Table {
 				return false;
 			}
 			
-			centerCards.add(card);
-			player.getHand().remove(card);
-			
-			next();
+			playCard(player, card);
 			
 			return true;
 			
 		}
 		return false;
 	}
+	
+	public void playCard(Player player, Card card) {
+		centerCards.add(card);
+		player.getHand().remove(card);
+		
+		next();
+	}
+
+	public void announce(Player player, GameAnnouncement announcement) {
+		playerAnnouncements.add(new SimpleEntry<Player, GameAnnouncement>(player, announcement));
+		next();
+	}
+
+	public List<Card> deal() {
+		List<Card> cards = deck.deal();
+		next();
+		return cards;
+	}
+
+
 
 
 }

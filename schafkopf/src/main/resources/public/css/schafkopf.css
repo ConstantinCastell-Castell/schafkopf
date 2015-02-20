@@ -24,3 +24,13 @@
 	width: 33%;
 	float: left;
 }
+
+.gameActions {
+	float: left;
+	width: 33%
+}
+
+.center div {
+	float: left;
+	width: 50%
+}

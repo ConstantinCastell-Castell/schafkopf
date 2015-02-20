@@ -26,4 +26,8 @@ public class Deck {
 		cards.subList(0, 4).clear();
 		return deal;
 	}
+	
+	public boolean isDealt() {
+		return (cards.size() == 0);
+	}
 }

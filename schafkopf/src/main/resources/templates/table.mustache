@@ -11,20 +11,35 @@
 		<div id="otherPlayers">
 			{{> otherPlayers}}		
 		</div>
-		
-		<div id="centerCards">
-			Place cards here:
-			{{#table}}
-			<ul id="centerCardsField" class="cardlist">
-				{{#centerCards}}
-				<li class="card playedCard" data-card-id="{{id}}">
-					<img src="{{icon}}">
-					{{rankName}}
-				</li>
-				{{/centerCards}}
-			</ul>
-			{{/table}}
+		<div class="center">
+			<div id="centerCards">
+				Place card you want to play here:
+				{{#table}}
+				<ul id="centerCardsField" class="cardlist">
+					{{#centerCards}}
+					<li class="card playedCard" data-card-id="{{id}}">
+						<img src="{{icon}}">
+						{{rankName}}
+					</li>
+					{{/centerCards}}
+				</ul>
+				{{/table}}
+			</div>
+			<div id="lastCenterCards">
+				Last played cards were:
+				{{#table}}
+				<ul id="lastCenterCardsField" class="cardlist">
+					{{#lastCenterCards}}
+					<li class="card playedCard" data-card-id="{{id}}">
+						<img src="{{icon}}">
+						{{rankName}}
+					</li>
+					{{/lastCenterCards}}
+				</ul>
+				{{/table}}
+			</div>
 		</div>
+		<div style="clear: both;"></div>
 		{{#player}}
 		<div id="connectedPlayer" class="{{#isActivePlayer}}otherPlayerActive{{/isActivePlayer}}">
 			This is your hand:

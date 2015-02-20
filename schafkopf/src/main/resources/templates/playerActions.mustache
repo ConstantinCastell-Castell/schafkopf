@@ -1,23 +1,50 @@
 {{#gameActions}}
-
-<form id="leaveTableForm" action="/table/leave" method="post"> 
-    <input type="submit" value="Leave table" /> 
-</form>
-
-<form id="closeTableForm" action="/table/close" method="post"> 
-    <input type="submit" value="Close table" {{^isOwner}}disabled="disabled"{{/isOwner}}/> 
-</form>
-
-<form id="addBotForm" action="/table/addBot" method="post"> 
-    <input type="submit" value="Add bot" {{^canAddBot}}disabled="disabled"{{/canAddBot}}/> 
-</form>
-
-<form id="startDealingForm" action="/table/startDealing" method="post"> 
-    <input type="submit" value="Deal" {{^canDeal}}disabled="disabled"{{/canDeal}}/> 
-</form>
-
-<form id="takeMoreCardsForm" action="/table/takeMoreCards" method="post"> 
-    <input type="submit" value="Take Cards" {{^canTakeMoreCards}}disabled="disabled"{{/canTakeMoreCards}}/> 
-</form>
-
+<div>
+	<div class="gameActions gameActionsSession">
+		<form id="leaveTableForm" action="/table/leave" method="post"> 
+		    <input type="submit" value="Leave table" /> 
+		</form>
+		
+		<form id="closeTableForm" action="/table/close" method="post"> 
+		    <input type="submit" value="Close table" {{^isOwner}}disabled="disabled"{{/isOwner}}/> 
+		</form>
+	</div>
+	<div class="gameActions gameActionsTable">
+		<form id="addBotForm" action="/table/addBot" method="post"> 
+		    <input type="submit" value="Add bot" {{^canAddBot}}disabled="disabled"{{/canAddBot}}/> 
+		</form>
+		<form id="startDealingForm" action="/table/startDealing" method="post"> 
+		    <input type="submit" value="Deal" {{^canDeal}}disabled="disabled"{{/canDeal}}/> 
+		</form>
+		
+		<form id="takeMoreCardsForm" action="/table/takeMoreCards" method="post"> 
+		    <input type="submit" value="Take Cards" {{^canTakeMoreCards}}disabled="disabled"{{/canTakeMoreCards}}/> 
+		</form>
+	</div>
+	<div class="gameActions gameActionsAnnouncement">
+		<form class="gameTypeForm" action="/table/announce" method="post">
+			<input type="hidden" value="NO_GAME" name="type" />
+		    <input type="submit" value="Next" {{^canAnnounce}}disabled="disabled"{{/canAnnounce}}/> 
+		</form>
+		
+		<form class="gameTypeForm" action="/table/announce" method="post">
+			<input type="hidden" value="NORMAL_GAME" name="type" />
+		    <input type="hidden" value="EICHEL" name="suit" />
+		    <input type="submit" value="Normal (Eichel)" {{^canAnnounce}}disabled="disabled"{{/canAnnounce}}/> 
+		</form>
+		
+		<form class="gameTypeForm" action="/table/announce" method="post">
+			<input type="hidden" value="NORMAL_GAME" name="type" />
+		    <input type="hidden" value="LAUB" name="suit" />
+		    <input type="submit" value="Normal (Laub)" {{^canAnnounce}}disabled="disabled"{{/canAnnounce}}/> 
+		</form>
+		
+		<form class="gameTypeForm" action="/table/announce" method="post">
+			<input type="hidden" value="NORMAL_GAME" name="type" />
+		    <input type="hidden" value="SCHELLEN" name="suit" />
+		    <input type="submit" value="Normal (Schellen)" {{^canAnnounce}}disabled="disabled"{{/canAnnounce}}/> 
+		</form>
+	</div>
+</div>
+<div style="clear:both;"></div>
 {{/gameActions}}

@@ -1,4 +1,4 @@
-package net.langenmaier.schafkopf.models;
+package net.langenmaier.schafkopf.enums;
 
 public enum GamePhase {
 	NO_GAME,

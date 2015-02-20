@@ -59,6 +59,11 @@ $(document).ready(function() {
 			target : '#gameArea',
 		})
 	});
+	
+	$("body").on("submit", ".gameTypeForm", function(event) {
+		event.preventDefault();
+		$(this).ajaxSubmit();
+	});
 
 	$("body").on("click", "#tableList a", function(event) {
 		event.preventDefault();
@@ -142,12 +147,19 @@ function applyingGameState(json) {
 		} else {
 			$('#takeMoreCardsForm input[type="submit"]').prop("disabled", true);
 		}
+		
+		if (state.gameActions.canAnnounce === true) {
+			$('.gameActionsAnnouncement input[type="submit"]')
+					.prop("disabled", false);
+		} else {
+			$('.gameActionsAnnouncement input[type="submit"]').prop("disabled", true);
+		}
 	}
 }
 
 function initCardList() {
 	$("#hand").sortable({
-		connectWith : ".cardlist",
+		connectWith : "#centerCardsField",
 		scroll : false,
 		update : function(event, ui) {
 			if (ui.item[0].parentNode != event.target) {
@@ -162,10 +174,10 @@ function initCardList() {
 					data : {cardId: cardId},
 					success : function(json) {
 						if (json === "true") {
-							console.log("Fixing gamestate");
+							$(ui.item[0]).addClass("playedCard");
+						} else {
+							$("#hand").sortable("cancel");
 						}
-						$(ui.item[0]).addClass("playedCard");
-						console.log(json);
 					},
 					error : function(json) {
 						$("#hand").sortable("cancel");
@@ -191,7 +203,6 @@ function initCardList() {
 	});
 
 	$("#centerCardsField").sortable({
-		connectWith : ".cardlist",
 		items: "li:not(.playedCard)"
 	});
 

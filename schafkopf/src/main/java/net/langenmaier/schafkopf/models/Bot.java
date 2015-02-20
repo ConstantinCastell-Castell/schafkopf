@@ -1,6 +1,6 @@
 package net.langenmaier.schafkopf.models;
 
-import net.langenmaier.schafkopf.Schafkopf;
+import net.langenmaier.schafkopf.enums.GamePhase;
 
 public class Bot extends Player implements Runnable {
 	private static int botCounter = 0;
@@ -18,10 +18,9 @@ public class Bot extends Player implements Runnable {
 				play();
 			}
 			try {
-				System.out.println("WAINTING TO PLAY");
 				Table table = getTable();
 				synchronized(table) {
-					table.wait(10000);
+					table.wait(1000);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -30,16 +29,15 @@ public class Bot extends Player implements Runnable {
 	}
 
 	private void play() {
-		System.out.println("BOT " +botId +" PLAYING");
+		System.out.println("BOT " + botId +" PLAYING");
 		if (getTable().getGamePhase() == GamePhase.DEALING) {
 			if (getHand().size()<8) {
-				System.out.println("TAKING CARDS");
-				takeCards(getTable().getDeck().deal());
-				getTable().next();
+				takeCards(getTable().deal());
 			}
-		}
-		synchronized (Schafkopf.class) {
-    		Schafkopf.class.notifyAll();;
+		} else if (getTable().getGamePhase() == GamePhase.ANNOUNCEMENT) {
+			getTable().announce(this, new GameAnnouncement());
+		} else if (getTable().getGamePhase() == GamePhase.PLAYING) {
+			getTable().playCard(this, hand.get(0));
 		}
 	}
 

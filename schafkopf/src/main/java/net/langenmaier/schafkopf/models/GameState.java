@@ -22,45 +22,25 @@ package net.langenmaier.schafkopf.models;
  * #L%
  */
 
-import net.langenmaier.schafkopf.enums.Ranks;
-import net.langenmaier.schafkopf.enums.Suits;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Card implements Cloneable {
-	private Suits suit;
-	private Ranks rank;
+public class GameState {
+	private Player player;
+	private List<OtherPlayerState> otherPlayersState = new ArrayList<OtherPlayerState>();
+	private GameActions gameActions = null;
 	
-	public Card(Suits suit, Ranks rank) {
-		this.rank = rank;
-		this.suit = suit;
-	}
-
-	public Ranks getRank() {
-		return rank;
-	}
-
-	public Suits getSuit() {
-		return suit;
-	}
+	//TODO center cards
 	
-	public String getName() {
-		return suit.name() + " - " + rank.name();
-	}
-	
-	public String getRankName() {
-		return rank.getDisplayName();
-	}
-	
-	public String getIcon() {
-		return "/images/" + suit.getDisplayName() + ".svg";
-	}
-	
-	public int getId() {
-		return this.hashCode();
-	}
-	
-	public Card(Card c) {
-		this.suit = c.getSuit();
-		this.rank = c.getRank();
+	public GameState(Table table, Player player) {
+		this.player = player;
+		if (table != null) {
+			this.gameActions = new GameActions(player, table);
+		
+			for(Player p : table.getOtherPlayers(player)) {
+				otherPlayersState.add(new OtherPlayerState(p.cardsLeft(), table.isPlayerActive(p)));
+			}
+		}
 	}
 
 }

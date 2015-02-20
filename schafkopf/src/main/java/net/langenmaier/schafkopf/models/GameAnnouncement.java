@@ -22,45 +22,37 @@ package net.langenmaier.schafkopf.models;
  * #L%
  */
 
-import net.langenmaier.schafkopf.enums.Ranks;
+import net.langenmaier.schafkopf.enums.GameOption;
+import net.langenmaier.schafkopf.enums.GameType;
 import net.langenmaier.schafkopf.enums.Suits;
 
-public class Card implements Cloneable {
+public class GameAnnouncement {
+	private GameType type;
 	private Suits suit;
-	private Ranks rank;
+	private GameOption option;
 	
-	public Card(Suits suit, Ranks rank) {
-		this.rank = rank;
+	public GameAnnouncement(GameType type, Suits suit) {
+		this.type = type;
 		this.suit = suit;
+		this.option = GameOption.NO_OPTION;
+	}
+	
+	public GameAnnouncement() {
+		this.type = GameType.NO_GAME;
+		this.option = GameOption.NO_OPTION;
 	}
 
-	public Ranks getRank() {
-		return rank;
+	public GameType getType() {
+		return type;
 	}
 
 	public Suits getSuit() {
 		return suit;
 	}
-	
-	public String getName() {
-		return suit.name() + " - " + rank.name();
-	}
-	
-	public String getRankName() {
-		return rank.getDisplayName();
-	}
-	
-	public String getIcon() {
-		return "/images/" + suit.getDisplayName() + ".svg";
-	}
-	
-	public int getId() {
-		return this.hashCode();
-	}
-	
-	public Card(Card c) {
-		this.suit = c.getSuit();
-		this.rank = c.getRank();
-	}
 
+	public GameOption getOption() {
+		return option;
+	}
+	
+	
 }

@@ -22,6 +22,7 @@ package net.langenmaier.schafkopf.models;
  * #L%
  */
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
 
@@ -40,5 +41,64 @@ public abstract class Game {
 	}
 	
 	protected abstract void initializeCardOrder();
+
+	public SimpleEntry<Player, Card> getTrickWinner(List<SimpleEntry<Player, Card>> centerCards) {
+		SimpleEntry<Player, Card> trickWinner =null;
+		
+		for (SimpleEntry<Player, Card> playedCard : centerCards) {
+			if (trickWinner == null) {
+				trickWinner = playedCard;
+			} else {
+				trickWinner = higherCard(trickWinner, playedCard);
+			}
+		}
+		
+		return trickWinner;
+	}
+
+	private SimpleEntry<Player, Card> higherCard(
+			SimpleEntry<Player, Card> trickWinner,
+			SimpleEntry<Player, Card> playedCard) {
+		if (trumpCards.contains(trickWinner.getValue())) {
+			System.out.println("TRUMP");
+			if (trumpCards.contains(playedCard.getValue())) {
+				for (Card c : trumpCards) {
+					// The cards are in the order of strength
+					// so the first one found is stronger
+					if (trickWinner.getValue().equals(c)) {
+						return trickWinner;
+					}
+					if (playedCard.getValue().equals(c)) {
+						return playedCard;
+					}
+				}
+			}
+			return trickWinner;
+		} else {
+			if (trumpCards.contains(playedCard.getValue())) {
+				// a trump is always stronger
+				return playedCard;
+			} else {
+				if (trickWinner.getValue().getSuit().equals(playedCard.getValue().getSuit())) {
+					Suits suit = trickWinner.getValue().getSuit();
+					for (Card c : colorCards.get(suit)) {
+						// The cards are in the order of strength
+						// so the first one found is stronger
+						if (trickWinner.getValue().equals(c)) {
+							return trickWinner;
+						}
+						if (playedCard.getValue().equals(c)) {
+							return playedCard;
+						}
+					}
+				} else {
+					return trickWinner;
+				}
+			}
+			return trickWinner;
+		}
+		
+		
+	}
 
 }

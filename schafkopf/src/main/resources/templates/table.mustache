@@ -15,14 +15,18 @@
 			<div id="centerCards">
 				Place card you want to play here:
 				{{#table}}
+				
 				<ul id="centerCardsField" class="cardlist">
 					{{#centerCards}}
+					{{#value}}
 					<li class="card playedCard" data-card-id="{{id}}">
 						<img src="{{icon}}">
 						{{rankName}}
 					</li>
+					{{/value}}
 					{{/centerCards}}
 				</ul>
+				
 				{{/table}}
 			</div>
 			<div id="lastCenterCards">
@@ -30,10 +34,12 @@
 				{{#table}}
 				<ul id="lastCenterCardsField" class="cardlist">
 					{{#lastCenterCards}}
+					{{#value}}
 					<li class="card playedCard" data-card-id="{{id}}">
 						<img src="{{icon}}">
 						{{rankName}}
 					</li>
+					{{/value}}
 					{{/lastCenterCards}}
 				</ul>
 				{{/table}}

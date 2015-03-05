@@ -22,17 +22,13 @@ package net.langenmaier.schafkopf.models;
  * #L%
  */
 
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.langenmaier.schafkopf.Schafkopf;
 import net.langenmaier.schafkopf.enums.GamePhase;
 import net.langenmaier.schafkopf.enums.GameType;
-import net.langenmaier.schafkopf.enums.Suits;
 
 public class Table {
 	private static int currentId = 0;
@@ -46,15 +42,15 @@ public class Table {
 	private int id;
 	private Deck deck;
 	private GamePhase gamePhase = GamePhase.NO_GAME;
-	private List<Card> centerCards = new ArrayList<Card>();
-	private List<Card> lastCenterCards = new ArrayList<Card>();
+	private List<SimpleEntry<Player, Card>> centerCards = new ArrayList<SimpleEntry<Player, Card>>();
+	private List<SimpleEntry<Player, Card>> lastCenterCards = new ArrayList<SimpleEntry<Player, Card>>();
 	private List<SimpleEntry<Player, GameAnnouncement>> playerAnnouncements = new ArrayList<SimpleEntry<Player, GameAnnouncement>>();
 	
-	public List<Card> getCenterCards() {
+	public List<SimpleEntry<Player, Card>> getCenterCards() {
 		return centerCards;
 	}
 	
-	public List<Card> getLastCenterCards() {
+	public List<SimpleEntry<Player, Card>> getLastCenterCards() {
 		return lastCenterCards;
 	}
 
@@ -171,11 +167,13 @@ public class Table {
 				currentPlayer = getNextPlayer(currentPlayer);
 			}
 		} else if ((gamePhase == GamePhase.PLAYING)) {
+			System.out.println("PLAYING");
 			if (centerCards.size() == 4) {
+				System.out.println("CLEARING");
 				Player winner = getTrickWinner();
 				winner.addTrick(centerCards);
 				lastCenterCards = centerCards;
-				centerCards = new ArrayList<Card>();
+				centerCards = new ArrayList<SimpleEntry<Player, Card>>();
 				currentPlayer = winner;
 				if (winner.getHand().size() == 0) {
 					gamePhase = GamePhase.PAYING;
@@ -191,8 +189,8 @@ public class Table {
 	}
 	
 	private Player getTrickWinner() {
-		// TODO implement an analysis in the game class
-		return getNextPlayer(currentPlayer);
+		SimpleEntry<Player, Card> trickWinner = game.getTrickWinner(centerCards);
+		return trickWinner.getKey();
 	}
 
 	private void createGame() {
@@ -251,7 +249,7 @@ public class Table {
 	}
 	
 	public void playCard(Player player, Card card) {
-		centerCards.add(card);
+		centerCards.add(new SimpleEntry<Player, Card>(player, card));
 		player.getHand().remove(card);
 		
 		next();

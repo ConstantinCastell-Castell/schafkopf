@@ -25,6 +25,12 @@ package net.langenmaier.schafkopf.models;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This a serializable class for informing a client about the current game
+ * 
+ * @author slangenmaier
+ *
+ */
 public class GameState {
 	private Player player;
 	private List<OtherPlayerState> otherPlayersState = new ArrayList<OtherPlayerState>();

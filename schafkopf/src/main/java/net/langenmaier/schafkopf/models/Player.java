@@ -24,11 +24,12 @@ package net.langenmaier.schafkopf.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
 
 public class Player {
 	private String name;
 	protected List<Card> hand = new ArrayList<Card>();
-	protected List<List<Card>> tricks = new ArrayList<List<Card>>();
+	protected List<List<SimpleEntry<Player, Card>>> tricks = new ArrayList<List<SimpleEntry<Player, Card>>>();
 	private transient Table table;
 	private boolean isActivePlayer = false;
 	
@@ -92,7 +93,7 @@ public class Player {
 		return false;
 	}
 
-	public void addTrick(List<Card> centerCards) {
+	public void addTrick(List<SimpleEntry<Player, Card>> centerCards) {
 		tricks.add(centerCards);
 	}
 

@@ -125,6 +125,12 @@ public class Table {
 	public void close() {
 		owner = null;
 		dealer = null;
+		for (Player p : players) {
+			if (p instanceof Bot) {
+				Bot b = (Bot) p;
+				b.requestExit();
+			}
+		}
 		players.removeAll(players);
 		game = null;
 	}
@@ -181,6 +187,7 @@ public class Table {
 			} else {
 				currentPlayer = getNextPlayer(currentPlayer);
 			}
+			System.out.println("NEXT PHASE COMPLETE");
 		}
 
 		synchronized (Schafkopf.class) {
@@ -241,7 +248,7 @@ public class Table {
 			}
 			
 			playCard(player, card);
-			
+			System.out.println("PLAYED CARD");
 			return true;
 			
 		}

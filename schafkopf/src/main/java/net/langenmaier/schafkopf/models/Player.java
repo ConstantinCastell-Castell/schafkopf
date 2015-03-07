@@ -29,7 +29,7 @@ import java.util.AbstractMap.SimpleEntry;
 public class Player {
 	private String name;
 	protected List<Card> hand = new ArrayList<Card>();
-	protected List<List<SimpleEntry<Player, Card>>> tricks = new ArrayList<List<SimpleEntry<Player, Card>>>();
+	protected transient List<List<SimpleEntry<Player, Card>>> tricks = new ArrayList<List<SimpleEntry<Player, Card>>>();
 	private transient Table table;
 	private boolean isActivePlayer = false;
 	

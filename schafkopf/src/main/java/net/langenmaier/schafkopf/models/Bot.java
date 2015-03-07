@@ -27,6 +27,8 @@ import net.langenmaier.schafkopf.enums.GamePhase;
 public class Bot extends Player implements Runnable {
 	private static int botCounter = 0;
 	private int botId;
+	
+	boolean exit = false;
 
 	public Bot() {
 		super("Bot " + botCounter);
@@ -35,7 +37,7 @@ public class Bot extends Player implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!exit) {
 			if (canPlay()) {
 				play();
 			}
@@ -72,5 +74,11 @@ public class Bot extends Player implements Runnable {
 
 		return false;
 	}
+	
+	public void requestExit() {
+		exit = true;
+	}
+
+	
 
 }
